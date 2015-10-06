@@ -1,56 +1,44 @@
 var five = require("johnny-five");
 var board = new five.Board();
-
-
-
 var request = require('request');
-
 var cheerio = require('cheerio');
 
 function scoreRequest(callback){
 
-  request('http://selfiesoldier.co/johnny/index.html', function (error, response, html) {
+  request('http://www.nfl.com/liveupdate/scorestrip/scorestrip.json', function (error, response, body) {
   if (!error && response.statusCode == 200) {
 
-      var $ = cheerio.load(html);
-    $('h1.test').each(function(i, element){
-      var a = $(this);
-      console.log(a.text());
-      
+      var $ = cheerio.load(body);
 
+      var a = $(".answer").html();
+
+      console.log(body);
+      
  	board.on("ready", function() {
 
 	var array = new five.Leds([3, 5, 6]);
 
-
-		if (a.text() == "NO") {
+		if (a == "") {
 	  
 
-	  array[0].pulse();
-	  array[2].off();
-	  console.log("GREEN")
-	  console.log(a.text());
+		  array[0].pulse();
+		  array[2].off();
+		  console.log("GREEN")
+		  console.log(a);
 
 	 
 
-		} else if (a.text() == "YES") {
+		} else if (a == "NO") {
 
-		array[0].off();
-		array[2].pulse();
-		console.log("RED");
-		console.log(a.text());
-		 
+			array[0].off();
+			array[2].pulse();
+			console.log("RED");
+			console.log(a);
 	}
 
-
-
 	});
- });
-
-
    
 }
-
 
 callback(); 
  
